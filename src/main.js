@@ -14,8 +14,8 @@ Vue.config.productionTip = false
 
 
 // UI框架组件按需引入
-import {Row, Col, Search,Button,Cell,CellGroup} from 'vant'
-Vue.use(Row).use(Col).use(Search).use(Button).use(Cell).use(CellGroup)
+import {Row, Col, Search,Button,Cell,CellGroup,Picker,Actionsheet,Popup,Area} from 'vant'
+Vue.use(Row).use(Col).use(Search).use(Button).use(Cell).use(CellGroup).use(Picker).use(Actionsheet).use(Popup).use(Area)
 
 
 

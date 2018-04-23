@@ -1,34 +1,26 @@
 <template>
-  <div>
-        
-        <i-header :headline="name"></i-header>
-        <div class="content">
-            <div class="details">
-                
-                    <div class="head">
-                            <h1>我是标题我是标题我是标题我是标题我是标题我是标题</h1>
-                            <p><time>2018-04-09 10:42:27</time><a @click="link">百度</a></p>
-                    </div>
-                    <div class="major">
-                        <p>阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德</p>
-                    </div>
+    <div>
+            <i-header :headline="name"></i-header>
+            <div class="content">
+                <div class="details">
+                    
+                        <div class="head">
+                                <h1>我是标题我是标题我是标题我是标题我是标题我是标题</h1>
+                                <p><time>2018-04-09 10:42:27</time><a @click="link">百度</a></p>
+                        </div>
+                        <div class="major">
+                            <p>阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德阿萨德</p>
+                        </div>
+                </div>
             </div>
-        </div>
-
-      
-  </div>
+    </div>
 </template>
 
 <script>
 import iHeader from '@/components/i-header'
-import {pageHeight} from '../common/js/common.js'
 export default {
     components:{
         iHeader,
-        pageHeight
-    },
-    mounted(){
-        pageHeight('.content')
     },
     data(){
         return{

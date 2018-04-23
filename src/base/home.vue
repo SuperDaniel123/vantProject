@@ -198,7 +198,7 @@ export default {
                     left: 50%;
                     background: @blue;
                     margin-left:-1rem;
-                }
+                } 
             }
             span.activate{
                 color:@blue;

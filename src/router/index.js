@@ -34,8 +34,18 @@ export default new Router({
           path:'/product',
           name:'product',
           component:resolve => require(['@/base/product'],resolve)
+        },
+        //充值
+        {
+          path:'/recharge',
+          name:'recharge',
+          component:resolve => require(['@/base/recharge'],resolve)
+        },
+        {
+          path:'/withdraw',
+          name:'withdraw',
+          component:resolve => require(['@/base/withdraw'],resolve)
         }
-        
       ]
     },
 

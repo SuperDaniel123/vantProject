@@ -12,8 +12,8 @@
           <i class="setting"></i>
       </div>
       <ul class="part">
-          <li>充值<div class="val"></div></li>
-          <li>提现</li>
+          <router-link :to="{path:'/recharge'}"><li>充值<div class="val"></div></li></router-link>
+          <router-link :to="{path:'/withdraw'}"><li>提现</li></router-link>
       </ul>
       <div class="e-line"></div>
       <van-cell-group>
@@ -91,11 +91,14 @@ export default {
 }
 .part{
     display: flex;
+    a{
+        flex:1;
+    }
     li{
         text-align: center;
         line-height: 4rem;
         height:4rem;
-        flex:1;
+        
         font-size:1.2rem;
         position: relative;
         .val{
