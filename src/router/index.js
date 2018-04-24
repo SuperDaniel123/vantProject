@@ -41,11 +41,25 @@ export default new Router({
           name:'recharge',
           component:resolve => require(['@/base/recharge'],resolve)
         },
+        //提现
         {
           path:'/withdraw',
           name:'withdraw',
           component:resolve => require(['@/base/withdraw'],resolve)
+        },
+        //登录
+        {
+          path:'/login',
+          name:'login',
+          component:resolve => require(['@/base/login'],resolve)
+        },
+        //测试
+        {
+          path:'/hello',
+          name:'hello',
+          component:resolve => require(['../components/HelloWorld'],resolve)
         }
+
       ]
     },
 

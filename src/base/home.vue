@@ -22,18 +22,89 @@
                 </span>
                 <p class="more">更多动态</p>
             </div>
+            
             <ul class="ctxList commonList" v-if="dynamicFlag == 0">
-                <li>
-                    <div class="he">
-                        <img src="../common/images/userhead.jpg" />
-                        <span class="userName">掌心期权2636</span>
-                    </div>
-                    <div class="detail">
-                        <span>浦发银行60000</span>
-                        <span>11.58 <small>认购</small></span>
-                        <span>04-03 17:38</span>
-                    </div>
-                </li>
+                <swiper :options="swiperOption" ref="mySwiper" class="swiper-no-swiping">
+                    <swiper-slide class="swiper-slide">
+                        <li>
+                            <div class="he">
+                                <img src="../common/images/userhead.jpg" />
+                                <span class="userName">掌心期权2636</span>
+                            </div>
+                            <div class="detail">
+                                <span>浦发银行60000</span>
+                                <span>11.58 <small>认购</small></span>
+                                <span>04-03 17:38</span>
+                            </div>
+                        </li>
+                    </swiper-slide>
+                    <swiper-slide class="swiper-slide">
+                        <li>
+                            <div class="he">
+                                <img src="../common/images/userhead.jpg" />
+                                <span class="userName">掌心期权2636</span>
+                            </div>
+                            <div class="detail">
+                                <span>浦发银行60000</span>
+                                <span>11.58 <small>认购</small></span>
+                                <span>04-03 17:38</span>
+                            </div>
+                        </li>
+                    </swiper-slide>
+                    <swiper-slide class="swiper-slide">
+                        <li>
+                            <div class="he">
+                                <img src="../common/images/userhead.jpg" />
+                                <span class="userName">掌心期权2636</span>
+                            </div>
+                            <div class="detail">
+                                <span>浦发银行60000</span>
+                                <span>11.58 <small>认购</small></span>
+                                <span>04-03 17:38</span>
+                            </div>
+                        </li>
+                    </swiper-slide>
+                    <swiper-slide class="swiper-slide">
+                        <li>
+                            <div class="he">
+                                <img src="../common/images/userhead.jpg" />
+                                <span class="userName">掌心期权2636</span>
+                            </div>
+                            <div class="detail">
+                                <span>浦发银行60000</span>
+                                <span>11.58 <small>认购</small></span>
+                                <span>04-03 17:38</span>
+                            </div>
+                        </li>
+                    </swiper-slide>
+                    <swiper-slide class="swiper-slide">
+                        <li>
+                            <div class="he">
+                                <img src="../common/images/userhead.jpg" />
+                                <span class="userName">掌心期权2636</span>
+                            </div>
+                            <div class="detail">
+                                <span>浦发银行60000</span>
+                                <span>11.58 <small>认购</small></span>
+                                <span>04-03 17:38</span>
+                            </div>
+                        </li>
+                    </swiper-slide>
+                    <swiper-slide class="swiper-slide">
+                        <li>
+                            <div class="he">
+                                <img src="../common/images/userhead.jpg" />
+                                <span class="userName">掌心期权2636</span>
+                            </div>
+                            <div class="detail">
+                                <span>浦发银行60000</span>
+                                <span>11.58 <small>认购</small></span>
+                                <span>04-03 17:38</span>
+                            </div>
+                        </li>
+                    </swiper-slide>
+                </swiper>
+                
             </ul>
             <div class="tactics" v-if="dynamicFlag == 1">
                 <div style="line-height:3rem; text-align: center;">暂无数据</div>
@@ -80,7 +151,13 @@
 </template>
 
 <script>
+import  {swiper, swiperSlide} from 'vue-awesome-swiper'
+import 'swiper/dist/css/swiper.css'
 export default {
+    components:{
+        swiper, 
+        swiperSlide
+    },
     data(){
         return{
             marketList:[
@@ -103,7 +180,12 @@ export default {
                     range:'-0.59'
                 }
             ],
-
+            swiperOption: {
+                slidesPerView: 3,
+                autoplay:true,
+                direction:'vertical',
+                autoHeight:true,
+            },
             //最新动态开关
             dynamic:[
                 {
@@ -212,13 +294,16 @@ export default {
             }
         }
         .ctxList{
+            margin-top:1rem;
             li{
-                padding:1rem 0;
-                .bottomRim;
+
+                box-sizing:border-box;
+                padding-bottom: 1rem;
+                .bottomRim !important;
                 .he{
                     img{
-                        height:5rem;
-                        width:5rem;
+                        height:4rem;
+                        width:4rem;
                         vertical-align: middle;
                         object-fit: cover
                     }
@@ -349,6 +434,11 @@ export default {
             }
         }
     }
-
+.swiper-container{
+    height:24rem;
+}
+.swiper-slide {
+    height:8rem !important;
+}
 
 </style>
