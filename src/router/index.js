@@ -11,7 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component:resolve => require(['../base/rootLayer'],resolve),
+      component:resolve => require(['@/base/rootLayer'],resolve),
       children:[
         {
           path:'/',
@@ -57,9 +57,40 @@ export default new Router({
         {
           path:'/hello',
           name:'hello',
-          component:resolve => require(['../components/HelloWorld'],resolve)
-        }
+          component:resolve => require(['@/components/HelloWorld'],resolve)
+        },
+        //设置
+        {
+          path:'/setting',
+          name:'setting',
+          component:resolve => require(['@/base/setting'],resolve)
+        },
+        //历史交易
+        {
+          path:'/record',
+          name:'record',
+          component:resolve => require(['@/base/record'],resolve)
+        },
+        //历史交易列表
+        {
+          path:'/recordList',
+          name:'recordList',
+          component:resolve => require(['@/base/recordList'],resolve)
+        },
 
+        //修改密码
+        {
+          path:'/password/:id',
+          name:'password',
+          component:resolve => require(['@/base/password'],resolve)
+        },
+
+        //绑定银行卡
+        {
+          path:'/bankcard',
+          name:'bankcard',
+          component:resolve => require(['@/base/bankcard'],resolve)
+        }
       ]
     },
 

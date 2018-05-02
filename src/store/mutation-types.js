@@ -5,3 +5,6 @@ export const IS_LOGIN = "IS_LOGIN"
 
 //首页状态
 export const INDEX_STATE = "INDEX_STATE"
+
+//交易状态
+export const TRADING = "TRADING"

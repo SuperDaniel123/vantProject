@@ -10,6 +10,11 @@
 import {mapMutations,mapGetters} from 'vuex'
 export default {
   name:'ifooter',
+    watch:{
+        'indexStateS'(val,old){
+            this.switchItem(val)
+        }
+    },
     computed:{
         ...mapGetters(['indexStateS'])
     },

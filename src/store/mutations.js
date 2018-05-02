@@ -15,6 +15,11 @@ const mutations = {
     [types.INDEX_STATE](state,index){
         state.indexState = index
     },
+
+    //交易状态
+    [types.TRADING](state,index){
+        state.trading = index
+    }
 }
 
 export default mutations

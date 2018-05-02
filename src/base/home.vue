@@ -210,7 +210,7 @@ export default {
                     temp['state'] = 1
                 }
             }
-        }
+        },
     }
 }
 </script>

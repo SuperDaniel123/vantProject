@@ -5,6 +5,8 @@ const state = {
     isLogin:false,
     //首页状态
     indexState:0,
+    //交易状态
+    trading:0
 }
 
 export default state

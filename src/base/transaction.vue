@@ -34,7 +34,7 @@
                 <li>认购权利金：<span class="red">0.00</span></li>
                 <li>市场交易：<span>以市价委托成交</span></li>
                 <li>到期日期：<span>2018-05-09</span></li>
-                <li>预期收益率：<span class="red">140.96%</span></li>
+                <!-- <li>预期收益率：<span class="red">140.96%</span></li> -->
                 <li>预期盈利额：<span class="red">23400.00元</span></li>
             </ul>
             <div class="e-line"></div>
@@ -43,9 +43,7 @@
                 <button>立即结算<br><small>(余额:0.00)</small></button>
             </div>
         </div>
-
-
-
+ 
         <!--挂单-->
         <table class="entryTable"  cellpadding="10"  v-if="index == 1">
             <tr>
@@ -75,11 +73,22 @@
 </template>
 
 <script>
+import {mapGetters,mapMutations} from 'vuex'
 export default {
     watch:{
         'radio'(val,old){
             // console.log(val)
         }
+    },
+    computed:{
+        ...mapGetters(['trading']),
+        index(){
+            return this.trading
+        }
+    },
+
+    created(){
+        this.getShow(this.trading)
     },
     data(){
         return{
@@ -98,8 +107,6 @@ export default {
                     state:'0'
                 }
             ],
-            //tabIndex
-            index:0,
             //期限radio
             radio:'1',
             //本金
@@ -135,6 +142,9 @@ export default {
         }
     },
     methods:{
+        ...mapMutations({
+            tra:'TRADING',
+        }),
         getShow(id){
             for (let i = 0; i < this.tabTeams.length ; i++){
                 let temp = this.tabTeams[i]
@@ -143,7 +153,7 @@ export default {
                     temp['state'] = 1
                 }
             }
-            this.index = id
+            this.tra(id) 
         },
         setSum(value,index){
             this.sum = value;
@@ -153,6 +163,9 @@ export default {
             }
             this.sumTeams[index]['state'] = 1;
         }
+    },
+    beforeDestroy(){
+        this.tra(0)
     }
 }
 </script>

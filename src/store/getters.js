@@ -4,3 +4,5 @@ export const setMID = state => state.MID
 export const isLogin = state => state.isLogin
 //首页状态
 export const indexStateS = state => state.indexState
+//交易状态
+export const trading = state => state.trading

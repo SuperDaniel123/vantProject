@@ -9,7 +9,7 @@
                   <span>余额：100元</span>
               </div>
           </div>
-          <i class="setting"></i>
+          <router-link :to="{path:'/setting'}"><i class="setting"></i></router-link>
       </div>
       <ul class="part">
           <router-link :to="{path:'/recharge'}"><li>充值<div class="val"></div></li></router-link>
@@ -17,26 +17,52 @@
       </ul>
       <div class="e-line"></div>
       <van-cell-group>
-          <van-cell title="我的持仓" icon="wap-home" is-link />
-          <van-cell title="资金明细" icon="exchange" is-link />
+          <van-cell title="我的持仓" icon="wap-home" is-link @click="goOrder"/>
+          <van-cell title="资金明细" icon="exchange" is-link @click="goneSkip('/record')"/>
       </van-cell-group>
       <div class="e-line"></div>
       <van-cell-group>
-          <van-cell title="历史交易" icon="clock" is-link />
+          <van-cell title="历史交易" icon="clock" is-link @click="goneSkip('/recordList')"/>
           <van-cell title="我的消息" icon="chat" is-link />
       </van-cell-group>
       <div class="e-line"></div>
       <van-cell-group>
           <van-cell title="我的推广" icon="exchange-record" is-link />
-          <van-cell title="客服热线" icon="contact" is-link />
+          <van-cell title="客服热线" icon="contact" is-link @click="callUp" />
       </van-cell-group>
       
   </div>
 </template>
 
 <script>
+import {mapMutations} from 'vuex'
 export default {
-  
+    data(){
+        return{
+
+        }
+    },
+    methods:{
+        ...mapMutations({
+            indexState:'INDEX_STATE',
+            trading:'TRADING'
+        }),
+        goOrder(){
+            this.trading(2)
+            this.indexState(1)
+        },
+        goneSkip(url){
+            this.$router.push(url)
+        },
+        //打电话
+        callUp(){
+            let xgfPhone = 13690225814
+            let r = confirm("拨打客服电话？")
+            if(r){
+                window.location.href = 'tel://' + xgfPhone;
+            }
+        }
+    }
 }
 </script>
 
