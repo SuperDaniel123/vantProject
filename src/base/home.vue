@@ -20,7 +20,6 @@
                 <span v-for="(item,index) in dynamic" :key="index" :class="item.state == 1? 'activate' : ''" @click="getShow(index)">
                     {{item.title}}<i v-if="item.state == 1"></i>
                 </span>
-                <p class="more">更多动态</p>
             </div>
             
             <ul class="ctxList commonList" v-if="dynamicFlag == 0">
@@ -132,17 +131,16 @@
         <div class="e-line"></div>
 
         <div class="common">
-            <div class="title"><i></i><span>资讯</span><router-link to="/newsList"><div class="more">更多</div></router-link></div>
+            <div class="title"><i></i><span>资讯</span><router-link to="/newsList"><div class="more">详情</div></router-link></div>
             <ul class="newsList commonList">
-                <router-link :to="{path:'/newsDetails'}">
-                <li>
-                    <h2>新闻新闻新闻新闻新闻新闻新闻新闻新闻新闻新闻新闻新闻</h2>
+                <li v-for="(item,index) in newsList" :key="index">
+                    <h2 v-text="item.Span"></h2>
                     <div class="datum">
-                        <p>证券时报网</p>
-                        <p>2018-04-04  10:26:13</p>
+                        <!-- <p>证券时报网</p> -->
+                        <p v-text="item.Time"></p>
                     </div>
                 </li>
-                </router-link>
+                
             </ul>
         </div>
 
@@ -157,6 +155,9 @@ export default {
     components:{
         swiper, 
         swiperSlide
+    },
+    created(){
+        this.getNews()
     },
     data(){
         return{
@@ -197,7 +198,8 @@ export default {
                     state:0
                 }
             ],
-            dynamicFlag:0
+            dynamicFlag:0,
+            newsList:[]
         }
     },
     methods:{
@@ -210,6 +212,19 @@ export default {
                     temp['state'] = 1
                 }
             }
+        },
+        //新闻列表
+        getNews(){
+            this.$ajax('/news/list','get').then(res=>{
+                let data = res.data;
+                if(data.ResultCD != 200){
+                    this.$toast.fail(data.ErrorMsg)
+                    return;
+                }
+                for(let i = 0; i < 3; i++){
+                    this.newsList.push(data.Data.News[i])
+                }
+            })
         },
     }
 }
@@ -381,11 +396,11 @@ export default {
         li{
             padding:1rem 0;
             background: url('../common/images/more.png') no-repeat right center;
-            background-size:1rem auto;
+            background-size:auto 1rem; 
             .bottomRim;
             h2{
                 padding-right:3rem;
-                font-size:1.2rem;
+                font-size:1.1rem;
                 font-weight: bold;
                 overflow: hidden;
                 text-overflow:ellipsis;
@@ -417,7 +432,7 @@ export default {
                 margin-right:0.5rem;
             }
             span{
-                font-size:@font1-25;
+                font-size:1.1rem;
                 font-weight: bold;
             }
             .more{

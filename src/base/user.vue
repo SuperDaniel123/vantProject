@@ -30,6 +30,9 @@
           <van-cell title="我的推广" icon="exchange-record" is-link />
           <van-cell title="客服热线" icon="contact" is-link @click="callUp" />
       </van-cell-group>
+      <div class="logout">
+          <van-button type="primary" size="large" @click="logout">退出登录</van-button>
+      </div>
       
   </div>
 </template>
@@ -45,7 +48,8 @@ export default {
     methods:{
         ...mapMutations({
             indexState:'INDEX_STATE',
-            trading:'TRADING'
+            trading:'TRADING',
+            login:'IS_LOGIN'
         }),
         goOrder(){
             this.trading(2)
@@ -61,6 +65,11 @@ export default {
             if(r){
                 window.location.href = 'tel://' + xgfPhone;
             }
+        },
+        logout(){
+            sessionStorage.removeItem('MID')
+            this.login(true)
+            window.location.reload();
         }
     }
 }
@@ -131,6 +140,9 @@ export default {
             .vertical;
         }
     }
+}
+.logout{
+    padding:1rem 2rem;
 }
 </style>
 

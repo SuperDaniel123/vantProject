@@ -23,12 +23,6 @@ export default new Router({
           name:'nameList',
           component:resolve => require(['@/base/newsList'],resolve)
         },
-        //新闻详情
-        {
-          path:'/newsDetails',
-          name:'newsDetails',
-          component:resolve => require(['@/base/newsDetails'],resolve)
-        },
         //产品
         {
           path:'/product',

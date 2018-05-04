@@ -13,7 +13,7 @@
              <input type="number" placeholder="请输入手机" v-model="forgetUser"/>
              <div class="aCode">
                 <input type="number" placeholder="请输入验证码" v-model="authCode"/>
-                <button @click="getCode(forgetUser)">获取验证码</button>
+                <input type="button" :class="disabled == false? 'btnCode blue':'btnCode gray'" :disabled = disabled @click="getCode(forgetUser)" v-model="sdCode" />
              </div>
              <input type="password" name="password" placeholder="请输入新密码" v-model="newPwd" />
              <input type="password" name="password" placeholder="请再次输入新密码" v-model="ReNewPwd" />
@@ -25,11 +25,11 @@
              <input type="text" placeholder="请输入推荐人" v-model="referrer" />
              <input type="number"  placeholder="请输入手机" v-model="registerPhone" />
              <input type="text" placeholder="请输入姓名" v-model="IdName" />
-             <input type="text" placeholder="请输入密码" v-model="enrollPwd" />
-             <input type="text" placeholder="请输入确认密码" v-model="affirmPwd" />
+             <input type="password" placeholder="请输入密码" v-model="enrollPwd" />
+             <input type="password" placeholder="请输入确认密码" v-model="affirmPwd" />
              <div class="aCode">
                 <input type="number" placeholder="请输入验证码" v-model="authCode"/>
-                <button>获取验证码</button>
+                <input type="button" :class="disabled == false? 'btnCode blue':'btnCode gray'" :disabled = disabled @click="getCode(registerPhone)" v-model="sdCode" />
              </div>
              <div class="otherOper clearfix"><span @click ="state = 0">登录</span></div>
              <input type="button" @click="reg()" name="Submit" value="注册" />
@@ -41,6 +41,7 @@
 
 <script>
 import {mapMutations} from 'vuex'
+import { setInterval, clearInterval } from 'timers';
 export default {
     name:'login',
     data(){
@@ -52,6 +53,11 @@ export default {
             ip:'127.0.0.1',
             //0 是登录，1是忘记密码, 2是注册
             state:0,
+            
+            //验证码按钮
+            sdCode:'获取验证码',
+            //禁用状态
+            disabled:false,
 
 
             //验证码
@@ -77,27 +83,167 @@ export default {
     methods:{
         ...mapMutations({
             setMID:'SET_MID',
+            // setUID:'SET_UID',
             isLogin:'IS_LOGIN'
         }),
         getLogin(){
-           this.$router.push('/')
+            let opt = {
+                LoginID:this.userPhone,
+                LoginPwd:this.password,
+                LoginDev:this.facility, 
+                LoginIP:this.ip
+            }
+            this.$ajax('/login','post',opt).then(res=>{
+                let data = res.data;
+                if(this.userPhone == ''){
+                    this.$toast('请输入用户名')
+                    return;
+                }else if(this.password == ''){
+                    this.$toast('密码不能为空')
+                    return;
+                }
+                
+                switch(data.ResultCD){
+                    case -3:{ 
+                        this.$toast('用户名长或密码长度不正确')
+                        break;
+                    }
+                    
+                    case "4129":{
+                        this.$toast(data.ErrorMsg)
+                        break;
+                    }
+
+                    case "500":{
+                        this.$toast(data.ErrorMsg)
+                        break;
+                    }
+
+                    default:{
+                        sessionStorage.setItem('MID',data.Data.MID)
+                        // sessionStorage.setItem('UID',data.Data.UID)
+                        localStorage.setItem('userName',this.userPhone)
+                        this.isLogin(true);
+                        this.setMID(sessionStorage.getItem('MID'));
+                        // this.setUID(sessionStorage.getItem('UID'));
+                        this.$router.push({
+                            path:'/'
+                        })
+                    }
+                }
+            })
         },
         getToken(id){
             this.state = id
-
+            this.$ajax('/sms/getToken','get',{}).then(res=>{
+                let data = res.data
+                this.token = data.Token
+            })
         },
+
+        //计时器
+        countDown(){
+            var i = 60
+            let times = setInterval(()=>{
+                this.sdCode = --i + '秒重新获取'
+                console.log(i)
+                if(i<0){
+                    clearInterval(times)
+                    this.disabled = false;
+                    this.sdCode = '获取验证码'
+                }
+            },1000)
+            
+            
+
+            
+        },
+
+        //获取验证码
         getCode(code){
             if(code == '' && code.length != 11){
-                alert('请输入正确手机号')
+                this.$toast('请输入正确手机号')
                 return;
             }
-   
-        },
-        forget_pwd(){
+
+            this.$ajax('/sms/sendMsg','post',{LoginID:code,Token:this.token}).then(res=>{
+                if(res.data.ResultCD != 200){
+                    this.$toast.fail(res.data.ErrorMsg);
+                    return
+                }
+                this.$toast('验证码已发送到手机上')
+                this.countDown()
+                this.disabled = true
+                return;
+            })
 
         },
+        forget_pwd(){
+            let opt = {
+                LoginID:this.forgetUser,
+                NewPwd:this.newPwd,
+                ReNewPwd:this.ReNewPwd,
+                Token:this.token,
+                Code:this.authCode
+            }
+            if(!opt.NewPwd || !opt.ReNewPwd){
+                this.$toast('密码或确认密码不能为空')
+                return;
+                if(opt.NewPwd != opt.ReNewPwd){
+                    this.$toast('密码不一致')
+                    return
+                }
+            }
+            this.$ajax('/forget_pwd','post',opt).then(res=>{
+                let data = res.data;
+                if(data.ResultCD =! 200){
+                    this.$toast.fail(data.ErrorMsg);
+                    return
+                }
+                this.$toast.success('操作成功')
+                this.state = 0;
+                this.authCode = this.forgetUser = this.newPwd = this.ReNewPwd = ''
+            })
+        },
         reg(){
-           
+            let opt = {
+                LoginID:this.registerPhone,
+                LoginPwd:this.enrollPwd,
+                ReLoginPwd:this.affirmPwd,
+                IDName:this.IdName,
+                Token:this.token,
+                aCode:this.referrer,
+                Code:this.authCode
+                
+            }
+            if(!opt.LoginID){
+                this.$toast('请输入手机')
+                return;
+            }
+            if(!opt.IDName){
+                this.$toast('请输入姓名')
+                return;
+            }
+            if(!opt.LoginPwd || !opt.ReLoginPwd){
+                this.$toast('密码或确认密码不能为空')
+                return;
+                if(opt.LoginPwd != opt.ReLoginPwd){
+                    this.$toast('密码不一致')
+                    return
+                }
+            }
+
+
+            this.$ajax('/reg','post',opt).then(res=>{
+                let data = res.data;
+                if(data.ResultCD == 200){
+                    this.$toast.success('注册成功')
+                    this.state = 0;
+                    this.registerPhone = this.enrollPwd = this.affirmPwd = this.IdName = this.referrer = this.authCode = ''
+                    return
+                }
+                this.$toast.fail(data.ErrorMsg);
+            })
         }
     }
   
@@ -156,16 +302,24 @@ export default {
 }
 .aCode{
     position: relative;
-    button{
-        padding:0 0.5rem;
+    input[type="button"].btnCode{
+        width:auto !important;
+        text-indent: 0 ;
+        padding:0 0.5rem !important;
         line-height: 2rem;
+        position: absolute ;
+        right:0.5rem ;
+        top:0.5rem 
+    }
+    input[type="button"].btnCode.blue{
+        border:1px solid @blue;
+        background: @blue;
+        color:@white;
+    }
+    input[type="button"].btnCode.gray{
         background: @white;
-        color:#cacaca;
+        color:#666666;
         border:1px solid #cacaca;
-        border-radius: 0.5rem;
-        position: absolute;
-        right:0.5rem;
-        top:0.5rem;
     }
 }
 

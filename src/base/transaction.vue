@@ -10,11 +10,17 @@
         <!--交易-->
         <div class="trDeal" v-if="index == 0">
             <div class="electBox">
-                <p>股票:
-                    <input class="ftext" type="text" placeholder="请输入股票编号或名称" />
+                <p><b>股票:</b><input class="ftext" type="text" placeholder="请输入股票编号或名称" v-model="searchText" />
                     <span>行情<i class="fa  fa-angle-right"></i></span>
                 </p>
                 <div class="nowpay">当前价:0.00</div>
+                <ul class="searchList" v-if="searchFlag == true">
+                    <li v-if="!searchLoad" v-for="(item,index) in searchData" :key="index" @click="getData(index)">
+                        <span>代号:{{item.Code}}</span><span>名称:{{item.Name}}</span>
+                    </li>
+                    <div class="jjz" v-if="searchLoad">加载中...</div>
+                    <div class="close"><span @click="searchFlag = false">关闭</span></div>
+                </ul>
             </div>
             <div class="e-line"></div>
 
@@ -78,10 +84,19 @@ export default {
     watch:{
         'radio'(val,old){
             // console.log(val)
+        },
+        'searchText'(val,old){
+            this.getSearchData()
+            if(val == '' || this.cid == 0){
+                this.searchFlag = false
+                return;
+            }
+            
+            this.searchFlag = true;
         }
     },
     computed:{
-        ...mapGetters(['trading']),
+        ...mapGetters(['trading','setMID']),
         index(){
             return this.trading
         }
@@ -138,7 +153,25 @@ export default {
                     value:'3000000',
                     state:0
                 },
-            ]
+            ],
+
+
+            /*
+             * 搜索功能
+             */
+
+            //搜索text
+            searchText:'',
+            //搜索列表:
+            searchData:[],
+            //搜索列表选中的项
+            searchOpt:'',
+            //搜索列表开关
+            searchFlag:false,
+            //搜索load开关
+            searchLoad:false,
+            cid:1
+            
         }
     },
     methods:{
@@ -162,6 +195,34 @@ export default {
                 temp['state'] = 0
             }
             this.sumTeams[index]['state'] = 1;
+        },
+        //获取搜索列表
+        getSearchData(){
+            let opt = {
+                MID:this.setMID,
+                keywords:this.searchText,
+                page:1,
+                limit:8
+            }
+            this.$ajax('/trade/trade_search','post',opt).then(res=>{
+                let data = res.data
+                this.searchLoad = true;
+                this.searchData = []
+                if(data.ResultCD != 200){
+                    alert(data.ErrorMsg)
+                    return;
+                }
+                this.searchData = data.Data.item_list;
+                this.searchLoad = false;
+                this.cid = 1
+            })
+        },
+        getData(id){
+            let arr = this.searchData;
+            this.searchOpt = arr[id];
+            this.searchText = arr[id].Name
+            this.searchFlag = false;
+            this.cid = 0
         }
     },
     beforeDestroy(){
@@ -273,16 +334,20 @@ export default {
 .trDeal{
     .electBox{
         padding:1.5rem 1rem;
+        position: relative;
         p{
             line-height: 2rem;
+            b{
+                display: inline-block;
+                width:3rem;
+            }
             .ftext{
                 line-height: 2rem;
                 height:2rem;
                 border: 1px solid @borderColor;
                 padding:0 0.5rem;
-                margin-left:0.5rem;
                 color:@font-Sgray;
-                min-width: 19rem;
+                width: 19rem;
                 box-sizing: border-box;
 
             }
@@ -299,6 +364,33 @@ export default {
         .nowpay{
             margin-top:0.5rem;
             padding-left:3rem;
+        }
+        .searchList{
+            width:19rem;
+            box-sizing: border-box;
+            z-index: 99;
+            border:1px solid #f0f0f0;
+            background: @white;
+            position: absolute;
+            top:3.5rem;
+            left:4rem;
+            li{
+                padding:0.5rem 1rem;
+                span{
+                    padding-right:1rem;
+                }
+            }
+            .close{
+                border-top:1px solid #f0f0f0;
+                padding:0.5rem 1rem;
+                text-align: right;
+                color:@blue;
+            }
+            .jjz{
+                line-height: 4rem;
+                height:4rem;
+                text-align: center;
+            }
         }
     }
     .deadline{
