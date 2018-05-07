@@ -25,17 +25,18 @@
             <div class="e-line"></div>
 
             <ul class="deadline commonList">
-                <li><p>期限：<span>2周</span></p><p>权利金比例：<span>4.56%</span></p><input type="radio" v-model="radio" value="1" /></li>
+                <li><p>期限：<span>1周</span></p><p>权利金比例：<span>4.56%</span></p><input type="radio" v-model="radio" value="1" /></li>
                 <li><p>期限：<span>1月</span></p><p>权利金比例：<span>4.56%</span></p><input type="radio" v-model="radio" value="2" /></li>
+                <li><p>期限：<span>2月</span></p><p>权利金比例：<span>4.56%</span></p><input type="radio" v-model="radio" value="3" /></li>
+                <li><p>期限：<span>3月</span></p><p>权利金比例：<span>4.56%</span></p><input type="radio" v-model="radio" value="4" /></li>
             </ul>
             <div class="e-line"></div>
             <div class="sumBox">
-                <p class="cc"><span>名义本金：</span><input type="number" v-model="sum" placeholder="请输入金额30万元起" /></p>
+                <p class="cc"><span>名义本金：</span><input type="number" v-model="sum" placeholder="请输入金额30万元起" />万</p>
                 <ul class="sumlist">
                     <li v-for="(item,index) in sumTeams" :key="index" @click="setSum(item.value,index)" :class="item.state == 1? 'active':''">{{item.title}}</li>
                 </ul>
             </div>
-            
             <ul class="commonList accountMore">
                 <li>认购权利金：<span class="red">0.00</span></li>
                 <li>市场交易：<span>以市价委托成交</span></li>
@@ -46,7 +47,7 @@
             <div class="e-line"></div>
             <div class="settle">
                 <div><p>需支付:<span>0.00</span>元</p></div>
-                <button>立即结算<br><small>(余额:0.00)</small></button>
+                <button @click="settleOther">立即结算<br><small>( 余额:{{this.capital.aBalance}} )</small></button>
             </div>
         </div>
  
@@ -86,13 +87,22 @@ export default {
             // console.log(val)
         },
         'searchText'(val,old){
-            this.getSearchData()
             if(val == '' || this.cid == 0){
-                this.searchFlag = false
-                return;
+                this.searchFlag = false;
+                this.cid = 1
+                return
             }
-            
-            this.searchFlag = true;
+            this.searchFlag = true
+            clearTimeout(this.timer)
+            this.timer = setTimeout(()=>{
+                this.searchLoad = true;
+            },500)
+        },
+        'searchLoad'(){
+            if(this.searchLoad){
+                this.getSearchData()
+            }
+
         }
     },
     computed:{
@@ -104,6 +114,7 @@ export default {
 
     created(){
         this.getShow(this.trading)
+        this.userInfo()
     },
     data(){
         return{
@@ -130,27 +141,27 @@ export default {
             sumTeams:[
                 {
                     title:'30万',
-                    value:'300000',
+                    value:'30',
                     state:0
                 },
                 {
                     title:'50万',
-                    value:'500000',
+                    value:'50',
                     state:0
                 },
                 {
                     title:'100万',
-                    value:'1000000',
+                    value:'100',
                     state:0
                 },
                 {
                     title:'200万',
-                    value:'2000000',
+                    value:'200',
                     state:0
                 },
                 {
-                    title:'300万',
-                    value:'3000000',
+                    title:'500万',
+                    value:'500',
                     state:0
                 },
             ],
@@ -170,7 +181,10 @@ export default {
             searchFlag:false,
             //搜索load开关
             searchLoad:false,
-            cid:1
+            timer:'',
+            cid:1,
+            //资金
+            capital:''
             
         }
     },
@@ -216,6 +230,7 @@ export default {
                 this.searchLoad = false;
                 this.cid = 1
             })
+            
         },
         getData(id){
             let arr = this.searchData;
@@ -223,6 +238,43 @@ export default {
             this.searchText = arr[id].Name
             this.searchFlag = false;
             this.cid = 0
+        },
+
+        placeOrder(){
+            let opt = {
+                MID:this.setMID,
+                OrderInfo:{
+                    
+                }
+            }
+        },
+        settleOther(){
+            let opt = {
+                MID:this.setMID,
+                ItemID:this.searchOpt['ItemID'],
+                NotionalPrincipal:this.sum,
+                ExpireDay:30
+
+            }
+            this.$ajax('/trade/order','post',opt).then(res=>{
+                let data = res.data
+                if(data.ResultCD != 200){
+                    this.$toast(data.ErrorMsg)
+                    return
+                }
+                this.$toast('购买成功')
+                
+            })
+        },
+        userInfo(){
+            this.$ajax('/account/balance','post',{MID:this.setMID}).then(res=>{
+                let data = res.data
+                if(data.ResultCD != 200){
+                    this.$toast(data.ErrorMsg)
+                    return
+                }
+                this.capital = data.Data
+            })
         }
     },
     beforeDestroy(){
