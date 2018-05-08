@@ -24,16 +24,16 @@
             
             <ul class="ctxList commonList" v-if="dynamicFlag == 0">
                 <swiper :options="swiperOption" ref="mySwiper" class="swiper-no-swiping">
-                    <swiper-slide class="swiper-slide">
+                    <swiper-slide class="swiper-slide" v-for="(item,index) in recent" :key="index">
                         <li>
                             <div class="he">
                                 <img src="../common/images/userhead.jpg" />
-                                <span class="userName">掌心期权2636</span>
+                                <span class="userName">{{item.IDName}}</span>
                             </div>
                             <div class="detail">
-                                <span>浦发银行60000</span>
-                                <span>11.58 <small>认购</small></span>
-                                <span>04-03 17:38</span>
+                                <span>{{item.Code}} {{item.Name}}</span>
+                                <span>{{item.CurrentPrice}} <small>认购</small></span>
+                                <span>{{item.CurrentTime}}</span>
                             </div>
                         </li>
                     </swiper-slide>
@@ -41,12 +41,12 @@
                         <li>
                             <div class="he">
                                 <img src="../common/images/userhead.jpg" />
-                                <span class="userName">掌心期权2636</span>
+                                <span class="userName">123123</span>
                             </div>
                             <div class="detail">
-                                <span>浦发银行60000</span>
-                                <span>11.58 <small>认购</small></span>
-                                <span>04-03 17:38</span>
+                                <span>600000 阿萨德</span>
+                                <span>222 <small>认购</small></span>
+                                <span>666</span>
                             </div>
                         </li>
                     </swiper-slide>
@@ -54,54 +54,16 @@
                         <li>
                             <div class="he">
                                 <img src="../common/images/userhead.jpg" />
-                                <span class="userName">掌心期权2636</span>
+                                <span class="userName">123123</span>
                             </div>
                             <div class="detail">
-                                <span>浦发银行60000</span>
-                                <span>11.58 <small>认购</small></span>
-                                <span>04-03 17:38</span>
+                                <span>600000 阿萨德</span>
+                                <span>222 <small>认购</small></span>
+                                <span>666</span>
                             </div>
                         </li>
                     </swiper-slide>
-                    <swiper-slide class="swiper-slide">
-                        <li>
-                            <div class="he">
-                                <img src="../common/images/userhead.jpg" />
-                                <span class="userName">掌心期权2636</span>
-                            </div>
-                            <div class="detail">
-                                <span>浦发银行60000</span>
-                                <span>11.58 <small>认购</small></span>
-                                <span>04-03 17:38</span>
-                            </div>
-                        </li>
-                    </swiper-slide>
-                    <swiper-slide class="swiper-slide">
-                        <li>
-                            <div class="he">
-                                <img src="../common/images/userhead.jpg" />
-                                <span class="userName">掌心期权2636</span>
-                            </div>
-                            <div class="detail">
-                                <span>浦发银行60000</span>
-                                <span>11.58 <small>认购</small></span>
-                                <span>04-03 17:38</span>
-                            </div>
-                        </li>
-                    </swiper-slide>
-                    <swiper-slide class="swiper-slide">
-                        <li>
-                            <div class="he">
-                                <img src="../common/images/userhead.jpg" />
-                                <span class="userName">掌心期权2636</span>
-                            </div>
-                            <div class="detail">
-                                <span>浦发银行60000</span>
-                                <span>11.58 <small>认购</small></span>
-                                <span>04-03 17:38</span>
-                            </div>
-                        </li>
-                    </swiper-slide>
+
                 </swiper>
                 
             </ul>
@@ -151,6 +113,7 @@
 <script>
 import  {swiper, swiperSlide} from 'vue-awesome-swiper'
 import 'swiper/dist/css/swiper.css'
+import {mapGetters} from 'vuex'
 export default {
     components:{
         swiper, 
@@ -158,6 +121,10 @@ export default {
     },
     created(){
         this.getNews()
+        this.recentNews()
+    },
+    computed:{
+        ...mapGetters(['setMID'])
     },
     data(){
         return{
@@ -199,7 +166,8 @@ export default {
                 }
             ],
             dynamicFlag:0,
-            newsList:[]
+            newsList:[],
+            recent:[]
         }
     },
     methods:{
@@ -226,6 +194,17 @@ export default {
                 }
             })
         },
+        //最新动态
+        recentNews(){
+            this.$ajax('/trade/new_trade','post',{MID:this.setMID}).then(res=>{
+                let data = res.data;
+                if(data.ResultCD != 200){
+                    this.$toast(data.ErrorMsg)
+                    return;
+                }
+                this.recent = data.Data.order_list;
+            })
+        }
     }
 }
 </script>

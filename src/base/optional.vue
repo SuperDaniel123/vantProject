@@ -10,22 +10,32 @@
                 <th>涨跌幅</th>
                 <th></th>
             </tr>
-            <tr class="list">
-                <td>浦发银行<span>600000</span></td>
+            <tr class="list" v-for="(item,index) in selectList" :key="index">
+                <td>{{item.Name}}<span>{{item.Code}}</span></td>
                 <td class="red">11.53</td>
                 <td class="red">+0.09%</td>
-                <td><van-button type="danger" size="small">认购</van-button></td>
+                <td><van-button type="primary" size="small">详情</van-button></td>
             </tr>
         </table>
         <van-popup v-model="show" position="right" :overlay="false">
             <div class='popupBox' :style="'height:'+ height">
                 <div class="popTop">
-                    <i class="fa fa-th-large" @click="show = false"></i>
+                    <i class="fa fa-th-large" @click="closePop"></i>
                     <div class="searchBox">
                         <van-search placeholder="请输入股票编号/名称/拼音" v-model="value" background="#fff" />
                     </div>
                 </div>
                 
+                <div class="listStyle">
+                    <div v-if="searchList.length == 0" class="nulltext">请输入关键词</div>
+                    <ul v-if="searchList.length != 0">
+                        <li v-for="(item,index) in searchList" :key="index">
+                            <span v-text="item.Code"></span>
+                            <span v-text="item.Name"></span>
+                            <van-button type="danger" class="dd" size="small" @click="subscription(item.ItemID)">认购</van-button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </van-popup>
     </div>
@@ -38,10 +48,14 @@ export default {
         'flag'(val,old){
             if(this.flag){
                 this.getSearch(this.value)
-                this.flag = false;
+                this.flag = false; 
             }
         },
-        'value'(){
+        'value'(val,old){
+            if(val == ''){
+                this.searchList = [];
+                return;
+            }
             clearTimeout(this.timer)
             this.timer = setTimeout(()=>{
                 this.flag = true
@@ -55,33 +69,80 @@ export default {
         }
     },
     created(){
+        this.getOptionalList()
     },
     data(){
         return{
             value:'',
+            //已选列表
+            selectList:[],
             flag:false,
             //节流时间
             timer:'',
             //右侧弹出
-            show: false
+            show: false,
+            //搜索列表
+            searchList:[],
         }
     },
     methods:{
         //已选商品
         getOptionalList(){
-            this.$ajax('/trade/custom','post',{MID:this.setMID}).then(res=>{
-                console.log(res)
+            let opt = {
+                MID:this.setMID,
+
+            }
+            this.$ajax('/trade/custom','post',opt).then(res=>{
+                let data = res.data
+                if(data.ResultCD != 200){
+                    this.$toast(data.ErrorMsg)
+                    return;
+                }
+                this.selectList = data.Data['item_list']
             })
         },
         //搜索列表
         getSearch(key){
+            if(key == ''){
+                return;
+            }
             let opt = {
                 MID:this.setMID,
                 keywords:key
             }
             this.$ajax('/trade/custom_search','post',opt).then(res=>{
-                console.log(res)
+                let data = res.data
+                if(data.ResultCD != 200){
+                    this.$toast(data.ErrorMsg)
+                    return;
+                }
+                let arr = data.Data['item_list'];
+                this.searchList = arr
             })
+        },
+        //认购商品
+        subscription(id){
+            let opt = {
+                MID:this.setMID,
+                ItemID:id
+            }
+            this.$ajax('/trade/pitchon','post',opt).then(res=>{
+                let data = res.data
+                if(data.ResultCD != 200){
+                    this.$toast(data.ErrorMsg)
+                    return;
+                }
+                if(data.State == 2){
+                    this.$toast('认购商品已存在')
+                    return;
+                }
+                this.$toast('认购成功')
+            })
+        },
+        //关闭pop
+        closePop(){
+            this.show = false
+            this.getOptionalList()
         }
     }
 
@@ -136,6 +197,32 @@ export default {
             top:50%;
             right:1rem;
             margin-top:-1rem;
+        }
+    }
+    .listStyle{
+        .nulltext{
+            text-align: center;
+            line-height: 3rem;
+        }
+        ul{
+            padding:1rem;
+            li{
+                .bottomRim;
+                line-height: 4rem;
+                height:4rem;
+                span:nth-of-type(1){
+                    color:#ccc;
+                }
+                span{
+                    display: inline-block;
+                    margin-right:3rem;
+                    font-size:@font1;
+                }
+                .dd{
+                    margin-top:1rem;
+                    float: right;
+                }
+            }
         }
     }
 }
