@@ -13,6 +13,15 @@ const mutations = {
 
     //首页状态
     [types.INDEX_STATE](state,index){
+        let timers = Date.parse(new Date())
+        if(timers >= localStorage.getItem('time')){
+            this._vm.$toast('登录超时')
+            sessionStorage.removeItem('MID')
+            setTimeout(()=>{
+                window.location.reload();
+                return
+            },1000)
+        }
         state.indexState = index
     },
 

@@ -123,6 +123,7 @@ export default {
                         sessionStorage.setItem('MID',data.Data.MID)
                         // sessionStorage.setItem('UID',data.Data.UID)
                         localStorage.setItem('userName',this.userPhone)
+                        localStorage.setItem('time',Date.parse(new Date()) + (35*60*1000))
                         this.isLogin(true);
                         this.setMID(sessionStorage.getItem('MID'));
                         // this.setUID(sessionStorage.getItem('UID'));
@@ -146,7 +147,6 @@ export default {
             var i = 60
             let times = setInterval(()=>{
                 this.sdCode = --i + '秒重新获取'
-                console.log(i)
                 if(i<0){
                     clearInterval(times)
                     this.disabled = false;
@@ -232,7 +232,6 @@ export default {
                     return
                 }
             }
-
 
             this.$ajax('/reg','post',opt).then(res=>{
                 let data = res.data;

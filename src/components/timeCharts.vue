@@ -30,7 +30,9 @@ export default {
         this.wsCurrPriceCONN()
     },
     beforeDestroy(){
-        this.wsCurr2.close();
+        if(this.wsCurr2){
+            this.wsCurr2.close();
+        }
     },
     methods:{
         drawPie(id){

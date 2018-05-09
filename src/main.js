@@ -23,6 +23,14 @@ var mid = sessionStorage.getItem('MID');
 
 //判断登录全局守卫
 router.beforeEach((to, from, next) => {
+  let timers = Date.parse(new Date())
+  if(timers >= localStorage.getItem('time')){
+      sessionStorage.removeItem('MID')
+      setTimeout(()=>{
+          next('/login')
+          return
+      },1000)
+  }
   if(mid){
     store.commit('IS_LOGIN', true)
   }
