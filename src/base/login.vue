@@ -44,6 +44,9 @@ import {mapMutations} from 'vuex'
 import { setInterval, clearInterval } from 'timers';
 export default {
     name:'login',
+    beforeCreate(){
+        localStorage.removeItem('time')
+    },
     data(){
         return{ 
             token:'',
@@ -76,9 +79,6 @@ export default {
             enrollPwd:'',
             affirmPwd:''
         }
-    },
-    created(){
-
     },
     methods:{
         ...mapMutations({

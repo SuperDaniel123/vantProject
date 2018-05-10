@@ -52,36 +52,23 @@
         </div>
  
         <!--挂单-->
-        <table class="entryTable"  cellpadding="10"  v-if="index == 1">
-            <tr>
-                <th class="fs">名称编号</th>
-                <th>状态</th>
-                <th>购入价</th>
-            </tr>
-            <tr>
-                <td class="fs">浦发银行<span>600000</span></td>
-                <td>未完成</td>
-                <td class="red">11.53</td>
-            </tr>
-        </table>
+        <entry-orders v-if="index == 1"></entry-orders>
+        
         <!--持仓-->
-        <ul class="myOrder" v-if="index == 2">
-            <li>
-                <h2 class="protit">浦发银行<span>600000</span></h2>
-                <ul class="selling">
-                    <li><span>涨幅</span><small class="red">8.68</small></li>
-                    <li><span>认购</span><small>11.58</small></li>
-                    <li><span>现价</span><small>11.90</small></li>
-                    <li><span>盈亏</span><small class="red">4521.6</small></li>
-                </ul> 
-            </li>
-        </ul>
+        <my-order v-if="index == 2"></my-order>
+        
   </div>
 </template>
 
 <script>
 import {mapGetters,mapMutations} from 'vuex'
+import entryOrders from '@/components/entryOrders'
+import myOrder from '@/components/myOrder'
 export default {
+    components:{
+        entryOrders,
+        myOrder
+    },
     watch:{
         'radio'(val,old){
             // console.log(val)
@@ -316,73 +303,6 @@ export default {
         color:@blue;
     }
 }
-.myOrder{
-    >li{
-        display: flex;
-        background: url('../common/images/more.png') no-repeat 98% center;
-        background-size:auto 1rem;
-        padding:1rem;
-        .bottomRim;
-        .protit{
-            display: inline-block;
-            line-height: 1.5rem;
-            text-align: center;
-            font-size:@font1-25;
-            span{
-                display: block;
-                font-size:@font1;
-                color:@font-Sgray;
-            }
-        }
-        .selling{
-            flex: 1;
-            float: right;
-            display: flex;
-            li{
-                flex: 1;
-                text-align: center;
-                line-height: 1.5rem;
-                span{
-                    display: inline-block;
-                    width:100%;
-                    color:@font-Sgray;
-                }
-                .red{
-                    color:@red;
-                }
-            }
-        }
-    }
-
-}
-
-.entryTable{
-    text-align: center;
-    width:100%;
-    tr{
-        border-bottom:1px solid #ebebeb;
-        th{
-            font-size:1.1rem;
-            font-weight: normal;
-        }
-        td{
-            font-size:1rem;
-            color:#888888;
-            span{
-                display: block;
-                color:#dddddd;
-            }
-        }
-        td.red{
-            color:#dd2a2b;
-        }
-    }
-    .fs{
-        text-align: left;
-    }
-
-}
-
 .trDeal{
     .electBox{
         padding:1.5rem 1rem;
